@@ -1,10 +1,9 @@
 import tkinter as tk
 import vlc
-import utils
 
 class VideoPlayer:
-    def __init__(self, video_url):
-        self.root = tk.Tk()
+    def __init__(self, root, video_url):
+        self.root = root
         self.video_url = video_url
         self.instance = vlc.Instance()
         self.player = self.instance.media_player_new()
@@ -14,14 +13,8 @@ class VideoPlayer:
         self.create_ui()
 
     def create_ui(self):
-        video_size = utils.getVideoSize(self.video_url)
-        if video_size:
-            width, height = video_size
-            self.root.geometry(f"{width}x{height}")
-        else:
-            self.root.geometry("800x600")
-
         self.root.title("Video Player")
+        self.root.geometry("800x600")
         self.video_panel = tk.Frame(self.root)
         self.video_panel.pack(fill=tk.BOTH, expand=1)
         self.player.set_hwnd(self.video_panel.winfo_id())
@@ -44,11 +37,8 @@ class VideoPlayer:
     def stop_video(self):
         self.player.stop()
 
-    def run(self):
-        self.root.mainloop()
-
 if __name__ == "__main__":
+    root = tk.Tk()
     video_url = "http://example.com/video.m3u8"  # 替换为实际的视频 URL
-    player = VideoPlayer(video_url)
-    player.run()
-
+    player = VideoPlayer(root, video_url)
+    root.mainloop()
