@@ -4,8 +4,8 @@ def getVideoSize(videoSourceURL: str) -> tuple:
     try:
         container = av.open(videoSourceURL)
         for stream in container.streams.video:
-            returnContent = (stream.width, stream.height)
+            size = (stream.width, stream.height)
+            container.close()
+            return size
     except:
-        returnContent = False
-
-    return returnContent
+        return False

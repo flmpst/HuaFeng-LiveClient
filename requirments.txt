@@ -1,3 +1,4 @@
 python-vlc
-av
+pillow
 requests
+ffpyplayer
