@@ -1,6 +1,5 @@
-import frontend
-import backend
+from frontend import MainWindow
 
-BASE_URL = "https://live.dfggmc.top/"
-
-mp = backend.MainProcessor(BASE_URL)
+if __name__ == "__main__":
+    app = MainWindow()
+    app.root.mainloop()

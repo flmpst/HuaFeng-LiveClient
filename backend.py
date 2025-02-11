@@ -1,44 +1,44 @@
-import requests
+import aiohttp
+import asyncio
 import json
 import typing
-from enum import Enum
 
 class MainProcessor(object):
-    def __init__(self, baseURL:str, token: str) -> None:
-        self.base_url = baseURL
+    def __init__(self, baseURL: str, token: str) -> None:
+        self.base_url = baseURL if baseURL.endswith('/') else baseURL + '/'
         self.token = token
 
-    def getLiveList(self) -> typing.Union[dict, bool]:  # Get live list
-        response = requests.get(self.base_url + "api/v1/live/list")
-        liveList = json.loads(response.content.decode('utf-8'))
-        if liveList["code"] == 200:
-            returnContent = liveList["data"]["list"]
-        else:
-            returnContent = False
+    async def getLiveList(self) -> typing.Union[dict, bool]:  # Get live list
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.base_url + "api/v1/live/list") as response:
+                content = await response.read()
+                liveList = json.loads(content.decode('utf-8-sig'))
+                if liveList["code"] == 200:
+                    return liveList["data"]["list"]
+                else:
+                    return False
 
-        return returnContent
-    
-    def getLiveAuthorName(self, liveID):  # Get author name
-        response = requests.get(self.base_url + f"api/v1/live/get?live_id={liveID}")
-        liveInformation = json.loads(response.content.decode('utf-8'))
-        if liveInformation["code"] == 200:
-            returnContent = liveInformation["data"]["username"]
-        else:
-            returnContent = False
+    async def getLiveAuthorName(self, liveID):  # Get author name
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.base_url + f"api/v1/live/get?live_id={liveID}") as response:
+                content = await response.read()
+                liveInformation = json.loads(content.decode('utf-8-sig'))
+                if liveInformation["code"] == 200:
+                    return liveInformation["data"]["username"]
+                else:
+                    return False
 
-        return returnContent
+    async def getLiveSource(self, liveID: int) -> typing.Union[str, bool]:  # Get live source url
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.base_url + f"api/v1/live/get?live_id={liveID}") as response:
+                content = await response.read()
+                liveInformation = json.loads(content.decode('utf-8-sig'))
+                if liveInformation["code"] == 200:
+                    return liveInformation["data"]["videoSource"]
+                else:
+                    return False
 
-    def getLiveSourece(self, liveID: int) -> typing.Union[str, bool]:  # Get live source url
-        response = requests.get(self.base_url + f"api/v1/live/get?live_id={liveID}")
-        liveInformation = json.loads(response.content.decode('utf-8'))
-        if liveInformation["code"] == 200:
-            returnContent = liveInformation["data"]["videoSource"]
-        else:
-            returnContent = False
-
-        return returnContent
-    
-    def createLive(self, name: str, description:str, videoSource:str, sourceType: str) -> bool:
+    async def createLive(self, name: str, description: str, videoSource: str, sourceType: str) -> bool:
         data = {
             "token": self.token,
             "description": description,
@@ -46,27 +46,23 @@ class MainProcessor(object):
             "videoSource": videoSource,
             "videoSourceType": sourceType
         }
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.base_url + "api/v1/live/create", data=data) as response:
+                content = await response.read()
+                if response.status == 200:
+                    return True
+                else:
+                    return False
 
-        response = requests.post(self.base_url + "api/v1/live/create", json=data)
-
-        if response.status_code == 200:
-            returnContent = True
-        else:
-            returnContent = False
-        
-        return returnContent
-    
-    def sendMessage(self, liveID: str, content: str) -> bool:
+    async def sendMessage(self, liveID: str, content: str) -> bool:
         data = {
             "token": self.token,
             "message": content
         }
-
-        respone = requests.post(self.base_url + f"api/v1/chat/send?room_id={liveID}")
-
-        if respone.status_code == 200:
-            returnContent = True
-        else:
-            returnContent = False
-        
-        return returnContent
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.base_url + f"api/v1/chat/send?room_id={liveID}", data=data) as response:
+                content = await response.read()
+                if response.status == 200:
+                    return True
+                else:
+                    return False
