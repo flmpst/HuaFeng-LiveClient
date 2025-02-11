@@ -9,7 +9,7 @@
 2. 新建一个虚拟环境
 
 ```
-python3 -m venv venv
+python -m venv venv
 ```
 
 3. 激活虚拟环境
@@ -20,13 +20,13 @@ start ./venv/Scripts/activate
 4. 安装依赖
 
 ```
-python3 -m pip -r ./requirments.txt
+python -m pip -r ./requirments.txt
 ```
 
 5. 启动程序
 
 ```
-python3 main.py
+python main.py
 ```
 
 6. Enjoy :D ~~(Enjoy个蛋啊 不如网页版)~~
