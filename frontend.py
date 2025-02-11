@@ -78,9 +78,9 @@ class MainWindow(Tk):
     def __init__(self):
         super().__init__()
         self.__win()
-        self.tk_label_frame_m70090d2 = self.__tk_label_frame_m70090d2(self)
-        self.tk_list_box_m7009mg6 = self.__tk_list_box_m7009mg6(self.tk_label_frame_m70090d2) 
-        self.tk_frame_m700adhb = self.__tk_frame_m700adhb(self)
+        self.tk_label_frame_m70090d2 = self.__tk_label_frame_m70090d2(self) 
+        self.tk_list_box_m7009mg6 = self.__tk_list_box_m7009mg6(self.tk_label_frame_m70090d2)  # 直播列表
+        self.tk_frame_m700adhb = self.__tk_frame_m700adhb(self)  
         self.tk_canvas_m700csgf = self.__tk_canvas_m700csgf(self.tk_frame_m700adhb) 
         self.tk_button_m700bxy8 = self.__tk_button_m700bxy8(self)
         self.tk_label_frame_m700yzw9 = self.__tk_label_frame_m700yzw9(self)
@@ -131,45 +131,46 @@ class MainWindow(Tk):
             hbar = Scrollbar(master, orient="horizontal")
             self.h_scrollbar(hbar, widget, x, y, w, h, pw, ph)
         self.scrollbar_autohide(vbar, hbar, widget)
+
     def __tk_label_frame_m70090d2(self, parent):
         frame = LabelFrame(parent, text="直播列表",)
         frame.place(relx=0.0333, rely=0.0411, relwidth=0.3660, relheight=0.8418)
         return frame
+    
     def __tk_list_box_m7009mg6(self, parent):
         lb = Listbox(parent)
         
-        lb.insert(END, "列表框")
-        
-        lb.insert(END, "Python")
-        
-        lb.insert(END, "Tkinter Helper")
-        
         lb.place(relx=0.0000, rely=0.0000, relwidth=1.0000, relheight=1.0000)
         return lb
+    
     def __tk_frame_m700adhb(self, parent):
         frame = Frame(parent,)
         frame.place(relx=0.4436, rely=0.0633, relwidth=0.3678, relheight=0.5063)
         return frame
+    
     def __tk_canvas_m700csgf(self, parent):
         canvas = Canvas(parent, bg="#aaa")
         canvas.place(relx=0.0000, rely=0.0000, relwidth=1.0000, relheight=1.0000)
         return canvas
+    
     def __tk_button_m700bxy8(self, parent):
         btn = Button(parent, text="进去", takefocus=False,)
         btn.place(relx=0.8503, rely=0.0633, relwidth=0.1054, relheight=0.1139)
         return btn
+    
     def __tk_label_frame_m700yzw9(self, parent):
         frame = LabelFrame(parent, text="直播间信息",)
         frame.place(relx=0.4436, rely=0.5728, relwidth=0.3660, relheight=0.3133)
         return frame
+    
     def __tk_list_box_m700arav(self, parent):
         lb = Listbox(parent)
         
-        lb.insert(END, "直播间名")
+        lb.insert(END, "直播间名: {}")
         
-        lb.insert(END, "主播")
+        lb.insert(END, "主播: {}")
         
-        lb.insert(END, "直播间人数")
+        lb.insert(END, "直播间人数: {}")
         
         lb.place(relx=0.0000, rely=0.0000, relwidth=1.0000, relheight=1.0000)
         return lb
@@ -199,6 +200,3 @@ class AskWindow(Tk):
 
         print(self.base_url)
         print(self.token)
-
-aw = AskWindow()
-aw.mainloop()
