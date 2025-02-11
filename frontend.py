@@ -184,14 +184,21 @@ class AskWindow(Tk):
         self.labelr8fs = Label(self, text="输入直播服务器地址")
         self.label3d3a = Label(self, text="例如: https://live.dfggmc.top/")
         self.textf3d0c = Text(self, width=40, height=1)
-        self.label8hsc = Label(self, text="输入用户 Token（未输入将无法发送弹幕、创建直播等）")
+        self.label8hsc = Label(self, text="输入用户 Token（未输入将无法发送弹幕、创建直播间等）")
         self.textdje2v = Text(self, width=40, height=1)
-        self.buttonf94 = Button(self, text="提交")
+        self.buttonf94 = Button(self, text="提交", command=self.getUserInput)
 
         self.elements = [self.labelr8fs, self.label3d3a, self.textf3d0c, self.label8hsc, self.textdje2v, self.buttonf94]
 
         for element in self.elements:
             element.pack()
+
+    def getUserInput(self):
+        self.base_url = self.textf3d0c.get(1.0, END).rstrip("\n")
+        self.token = self.textdje2v.get(1.0, END).rstrip("\n")
+
+        print(self.base_url)
+        print(self.token)
 
 aw = AskWindow()
 aw.mainloop()
