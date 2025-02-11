@@ -74,7 +74,7 @@ class VideoPlay:
             self.player.set_pause(self.is_paused)  # 设置播放器暂停状态
 
 
-class WinGUI(Tk):
+class MainWindow(Tk):
     def __init__(self):
         super().__init__()
         self.__win()
@@ -85,11 +85,12 @@ class WinGUI(Tk):
         self.tk_button_m700bxy8 = self.__tk_button_m700bxy8(self)
         self.tk_label_frame_m700yzw9 = self.__tk_label_frame_m700yzw9(self)
         self.tk_list_box_m700arav = self.__tk_list_box_m700arav(self.tk_label_frame_m700yzw9) 
+
     def __win(self):
         self.title("花枫Live")
         # 设置窗口大小、居中
-        width = 541
-        height = 316
+        width = 550
+        height = 320
         screenwidth = self.winfo_screenwidth()
         screenheight = self.winfo_screenheight()
         geometry = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
@@ -172,3 +173,25 @@ class WinGUI(Tk):
         
         lb.place(relx=0.0000, rely=0.0000, relwidth=1.0000, relheight=1.0000)
         return lb
+    
+class AskWindow(Tk):
+    def __init__(self, screenName = None, baseName = None, className = "Tk", useTk = True, sync = False, use = None):
+        super().__init__(screenName, baseName, className, useTk, sync, use)
+
+        self.geometry("400x150")
+        self.title(" ")
+
+        self.labelr8fs = Label(self, text="输入直播服务器地址")
+        self.label3d3a = Label(self, text="例如: https://live.dfggmc.top/")
+        self.textf3d0c = Text(self, width=40, height=1)
+        self.label8hsc = Label(self, text="输入用户 Token（未输入将无法发送弹幕、创建直播等）")
+        self.textdje2v = Text(self, width=40, height=1)
+        self.buttonf94 = Button(self, text="提交")
+
+        self.elements = [self.labelr8fs, self.label3d3a, self.textf3d0c, self.label8hsc, self.textdje2v, self.buttonf94]
+
+        for element in self.elements:
+            element.pack()
+
+aw = AskWindow()
+aw.mainloop()

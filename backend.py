@@ -9,7 +9,7 @@ class MainProcessor(object):
 
     async def _getLiveList(self) -> typing.Union[dict, bool]:  # 获取直播列表
         async with aiohttp.ClientSession() as session:
-            async with session.get(self.base_url + "/live/list") as response:
+            async with session.get(self.base_url + "api/v1/live/list") as response:
                 liveList = json.loads(await response.text(encoding='utf-8-sig'))
                 if liveList["code"] == 200:
                     returnContent = liveList["data"]["list"]
@@ -23,7 +23,7 @@ class MainProcessor(object):
         
     async def _getLiveSource(self, liveID: int) -> typing.Union[str, bool]:  # 获取直播源URL
         async with aiohttp.ClientSession() as session:
-            async with session.get(self.base_url + f"/live/get?live_id={liveID}") as response:
+            async with session.get(self.base_url + f"api/v1/live/get?live_id={liveID}") as response:
                 liveInformation = json.loads(await response.text(encoding='utf-8-sig'))
                 if liveInformation["code"] == 200:
                     returnContent = liveInformation["data"]["videoSource"]
