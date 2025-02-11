@@ -139,23 +139,26 @@ class MainWindow:
                         self.tk_list_box_m700arav.insert(tkinter.END, f"直播间人数: {live_details['peoples']}")
                         self.tk_list_box_m700arav.insert(tkinter.END, f"描述: {live_details['description']}")
                         
-                        # 绘制直播封面
-                        if live_details['pic']:
-                            async with aiohttp.ClientSession() as session:
-                                async with session.get(live_details['pic']) as response:
-                                    data = await response.read()  # 使用二进制模式读取数据
-                                    image = Image.open(io.BytesIO(data))  # 将数据转换为图像对象
-                                    
-                                    # 获取Canvas的大小
-                                    canvas_width = self.tk_canvas_m700csgf.winfo_width()
-                                    canvas_height = self.tk_canvas_m700csgf.winfo_height()
-                                    
-                                    # 等比例缩放图片
-                                    image.thumbnail((canvas_width, canvas_height))
-                                    
-                                    photo = ImageTk.PhotoImage(image=image)
-                                    self.tk_canvas_m700csgf.create_image(0, 0, image=photo, anchor=tkinter.NW)
-                                    self.tk_canvas_m700csgf.image = photo  # 保持对PhotoImage的引用以防止垃圾回收
+                        try:
+                            # 绘制直播封面
+                            if live_details['pic']:
+                                async with aiohttp.ClientSession() as session:
+                                    async with session.get(live_details['pic']) as response:
+                                        data = await response.read()  # 使用二进制模式读取数据
+                                        image = Image.open(io.BytesIO(data))  # 将数据转换为图像对象
+                                        
+                                        # 获取Canvas的大小
+                                        canvas_width = self.tk_canvas_m700csgf.winfo_width()
+                                        canvas_height = self.tk_canvas_m700csgf.winfo_height()
+                                        
+                                        # 等比例缩放图片
+                                        image.thumbnail((canvas_width, canvas_height))
+                                        
+                                        photo = ImageTk.PhotoImage(image=image)
+                                        self.tk_canvas_m700csgf.create_image(0, 0, image=photo, anchor=tkinter.NW)
+                                        self.tk_canvas_m700csgf.image = photo  # 保持对PhotoImage的引用以防止垃圾回收
+                        except:
+                            ...
 
     def enter_live(self):
         threading.Thread(target=self._enter_live_thread).start()
