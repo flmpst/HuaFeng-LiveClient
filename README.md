@@ -12,19 +12,24 @@
 python3 -m venv venv
 ```
 
-3. 安装依赖
+3. 激活虚拟环境
+```
+start ./venv/Scripts/activate
+```
+
+4. 安装依赖
 
 ```
 python3 -m pip -r ./requirments.txt
 ```
 
-4. 启动程序
+5. 启动程序
 
 ```
 python3 main.py
 ```
 
-5. Enjoy :D ~~(Enjoy个蛋啊 不如网页版)~~
+6. Enjoy :D ~~(Enjoy个蛋啊 不如网页版)~~
 \
 \
 \
