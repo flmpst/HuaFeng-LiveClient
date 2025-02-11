@@ -48,6 +48,7 @@ class MainProcessor(object):
         
         async with aiohttp.ClientSession() as session:
             async with session.post(self.base_url + "api/v1/live/create", data=data) as response:
+                print(data)
                 if response.status == 200:
                     return True
                 else:
