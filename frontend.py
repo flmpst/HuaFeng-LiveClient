@@ -89,6 +89,7 @@ class MainWindow:
         self.ask_window.wait_window()
         self.base_url = self.ask_window.base_url
         self.token = self.ask_window.token
+        self.cookie = self.ask_window.cookie
 
         self.root = tkinter.Tk()
         self.__win()
@@ -101,7 +102,7 @@ class MainWindow:
         self.tk_label_frame_m700yzw9 = self.__tk_label_frame_m700yzw9(self.root)
         self.tk_list_box_m700arav = self.__tk_list_box_m700arav(self.tk_label_frame_m700yzw9) 
 
-        self.processor = backend.MainProcessor(baseURL=self.base_url, token=self.token)  # 初始化MainProcessor
+        self.processor = backend.MainProcessor(baseURL=self.base_url, token=self.token, phpsessid=self.cookie)  # 初始化MainProcessor
         self.root.after(0, self.run_async_tasks)
 
     def run_async_tasks(self):
@@ -286,13 +287,15 @@ class AskWindow(tkinter.Tk):
         super().__init__()
 
         self.geometry("400x150")
-        self.title(" ")
+        self.title("")
 
         self.labelr8fs = ttk.Label(self, text="输入直播服务器地址")
         self.label3d3a = ttk.Label(self, text="例如: https://live.dfggmc.top/")
         self.textf3d0c = tkinter.Text(self, width=40, height=1)
         self.label8hsc = ttk.Label(self, text="输入API Token（未输入将无法发送弹幕、创建直播间等）")
         self.textdje2v = tkinter.Text(self, width=40, height=1)
+        self.label4vtf = ttk.Label(self, text="输入PHPSESSID（可以提供更多功能）")
+        self.textdsg2d = tkinter.Text(self, width=40, height=1)
         self.buttonf94 = ttk.Button(self, text="提交", command=self.getUserInput)
 
         self.textf3d0c.insert(tkinter.END, "https://live.dfggmc.top/")
@@ -305,13 +308,14 @@ class AskWindow(tkinter.Tk):
     def getUserInput(self):
         self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
         self.token = self.textdje2v.get(1.0, tkinter.END).rstrip("\n")
+        self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
         self.destroy()
 
 class CreateLive(tkinter.Tk):
     def __init__(self, processor: backend.MainProcessor):
         super().__init__()
         self.processor: backend.MainProcessor = processor
-        self.source_type = tkinter.StringVar(value="FLV")  # 默认值为 FLV
+        self.source_type = tkinter.StringVar(value="flv")  # 默认值为 FLV
         self.__win()
         self.tk_input_m70lv17r = self.__tk_input_m70lv17r(self)
         self.tk_label_m70lvean = self.__tk_label_m70lvean(self)
