@@ -1,4 +1,4 @@
-python-vlc
 pillow
 requests
 ffpyplayer
+aiohttp

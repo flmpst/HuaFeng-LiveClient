@@ -7,71 +7,71 @@ from tkinter import *
 from tkinter.ttk import *
 from backend import MainProcessor
 
-# Define video player class
+# 定义视频播放器类
 class VideoPlay:
-    # Initialization function
+    # 初始化函数
     def __init__(self, videoSource: str, anchor: str) -> None:
         self.root: tk.Tk = tk.Tk()
-        self.root.title(f'{anchor}的直播')  # Set window title
+        self.root.title(f'{anchor}的直播')  # 设置窗口标题
 
-        # Create a canvas for displaying video frames
+        # 创建一个画布用于显示视频帧
         self.canvas: tk.Canvas = tk.Canvas(self.root, bg='black')
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
-        # Create pause/play button
+        # 创建暂停/播放按钮
         self.pause_button: tk.Button = tk.Button(self.root, text='开始/暂停', command=self.toggle_pause)
         self.pause_button.pack(side=tk.LEFT)
 
-        # Initialize player and playback state flags
+        # 初始化播放器和播放状态标志
         self.player: MediaPlayer = None
         self.is_paused: bool = False
         self.is_stopped: bool = False
 
-        # Start playing video
+        # 开始播放视频
         self.start_video(videoSource)
 
-    # Function to start playing video
+    # 开始播放视频的函数
     def start_video(self, file_path: str) -> None:
-        self.player = MediaPlayer(file_path)  # Create a MediaPlayer object
+        self.player = MediaPlayer(file_path)  # 创建一个MediaPlayer对象
         self.loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
         threading.Thread(target=self.loop.run_forever).start()
         asyncio.run_coroutine_threadsafe(self.play_video(), self.loop)
 
-    # Asynchronous function to play video
+    # 异步播放视频的函数
     async def play_video(self) -> None:
         while not self.is_stopped:
             if self.is_paused:
                 await asyncio.sleep(0.1)
                 continue
 
-            frame, val = self.player.get_frame()  # Get next frame and frame interval
+            frame, val = self.player.get_frame()  # 获取下一帧和帧间隔
             if val == 'eof':
-                self.player = None  # Release player resources if end of video
+                self.player = None  # 如果视频结束，释放播放器资源
                 break
             elif frame is None:
-                await asyncio.sleep(0.01)  # Retry if no frame
+                await asyncio.sleep(0.01)  # 如果没有帧，重试
                 continue
 
-            # Convert frame image to Tkinter PhotoImage and display on canvas
+            # 将帧图像转换为Tkinter PhotoImage并显示在画布上
             image, pts = frame
             image = Image.frombytes("RGB", image.get_size(), bytes(image.to_bytearray()[0]))
 
-            # Get window size and scale image proportionally
+            # 获取窗口大小并按比例缩放图像
             window_width: int = self.canvas.winfo_width()
             window_height: int = self.canvas.winfo_height()
             image.thumbnail((window_width, window_height))
 
             photo: ImageTk.PhotoImage = ImageTk.PhotoImage(image=image)
             self.canvas.create_image(0, 0, image=photo, anchor=tk.NW)
-            self.canvas.image = photo  # Keep reference to PhotoImage to prevent garbage collection
+            self.canvas.image = photo  # 保持对PhotoImage的引用以防止垃圾回收
 
-            await asyncio.sleep(val)  # Wait for next frame interval
+            await asyncio.sleep(val)  # 等待下一个帧间隔
 
-    # Function to toggle pause state
+    # 切换暂停状态的函数
     def toggle_pause(self) -> None:
         if self.player:
-            self.is_paused = not self.is_paused  # Toggle pause state
-            self.player.set_pause(self.is_paused)  # Set player pause state
+            self.is_paused = not self.is_paused  # 切换暂停状态
+            self.player.set_pause(self.is_paused)  # 设置播放器暂停状态
 
 
 class WinGUI(Tk):
@@ -79,12 +79,12 @@ class WinGUI(Tk):
         super().__init__()
         self.__win()
         self.tk_label_frame_m70090d2 = self.__tk_label_frame_m70090d2(self)
-        self.tk_list_box_m7009mg6 = self.__tk_list_box_m7009mg6( self.tk_label_frame_m70090d2) 
+        self.tk_list_box_m7009mg6 = self.__tk_list_box_m7009mg6(self.tk_label_frame_m70090d2) 
         self.tk_frame_m700adhb = self.__tk_frame_m700adhb(self)
-        self.tk_canvas_m700csgf = self.__tk_canvas_m700csgf( self.tk_frame_m700adhb) 
+        self.tk_canvas_m700csgf = self.__tk_canvas_m700csgf(self.tk_frame_m700adhb) 
         self.tk_button_m700bxy8 = self.__tk_button_m700bxy8(self)
         self.tk_label_frame_m700yzw9 = self.__tk_label_frame_m700yzw9(self)
-        self.tk_list_box_m700arav = self.__tk_list_box_m700arav( self.tk_label_frame_m700yzw9) 
+        self.tk_list_box_m700arav = self.__tk_list_box_m700arav(self.tk_label_frame_m700yzw9) 
     def __win(self):
         self.title("花枫Live")
         # 设置窗口大小、居中
@@ -97,7 +97,7 @@ class WinGUI(Tk):
         
         self.minsize(width=width, height=height)
         
-    def scrollbar_autohide(self,vbar, hbar, widget):
+    def scrollbar_autohide(self, vbar, hbar, widget):
         """自动隐藏滚动条"""
         def show():
             if vbar: vbar.lift(widget)
@@ -113,15 +113,15 @@ class WinGUI(Tk):
         if hbar: hbar.bind("<Leave>", lambda e: hide())
         widget.bind("<Leave>", lambda e: hide())
     
-    def v_scrollbar(self,vbar, widget, x, y, w, h, pw, ph):
+    def v_scrollbar(self, vbar, widget, x, y, w, h, pw, ph):
         widget.configure(yscrollcommand=vbar.set)
         vbar.config(command=widget.yview)
         vbar.place(relx=(w + x) / pw, rely=y / ph, relheight=h / ph, anchor='ne')
-    def h_scrollbar(self,hbar, widget, x, y, w, h, pw, ph):
+    def h_scrollbar(self, hbar, widget, x, y, w, h, pw, ph):
         widget.configure(xscrollcommand=hbar.set)
         hbar.config(command=widget.xview)
         hbar.place(relx=x / pw, rely=(y + h) / ph, relwidth=w / pw, anchor='sw')
-    def create_bar(self,master, widget,is_vbar,is_hbar, x, y, w, h, pw, ph):
+    def create_bar(self, master, widget, is_vbar, is_hbar, x, y, w, h, pw, ph):
         vbar, hbar = None, None
         if is_vbar:
             vbar = Scrollbar(master)
@@ -130,11 +130,11 @@ class WinGUI(Tk):
             hbar = Scrollbar(master, orient="horizontal")
             self.h_scrollbar(hbar, widget, x, y, w, h, pw, ph)
         self.scrollbar_autohide(vbar, hbar, widget)
-    def __tk_label_frame_m70090d2(self,parent):
-        frame = LabelFrame(parent,text="直播列表",)
+    def __tk_label_frame_m70090d2(self, parent):
+        frame = LabelFrame(parent, text="直播列表",)
         frame.place(relx=0.0333, rely=0.0411, relwidth=0.3660, relheight=0.8418)
         return frame
-    def __tk_list_box_m7009mg6(self,parent):
+    def __tk_list_box_m7009mg6(self, parent):
         lb = Listbox(parent)
         
         lb.insert(END, "列表框")
@@ -145,23 +145,23 @@ class WinGUI(Tk):
         
         lb.place(relx=0.0000, rely=0.0000, relwidth=1.0000, relheight=1.0000)
         return lb
-    def __tk_frame_m700adhb(self,parent):
+    def __tk_frame_m700adhb(self, parent):
         frame = Frame(parent,)
         frame.place(relx=0.4436, rely=0.0633, relwidth=0.3678, relheight=0.5063)
         return frame
-    def __tk_canvas_m700csgf(self,parent):
-        canvas = Canvas(parent,bg="#aaa")
+    def __tk_canvas_m700csgf(self, parent):
+        canvas = Canvas(parent, bg="#aaa")
         canvas.place(relx=0.0000, rely=0.0000, relwidth=1.0000, relheight=1.0000)
         return canvas
-    def __tk_button_m700bxy8(self,parent):
+    def __tk_button_m700bxy8(self, parent):
         btn = Button(parent, text="进去", takefocus=False,)
         btn.place(relx=0.8503, rely=0.0633, relwidth=0.1054, relheight=0.1139)
         return btn
-    def __tk_label_frame_m700yzw9(self,parent):
-        frame = LabelFrame(parent,text="直播间信息",)
+    def __tk_label_frame_m700yzw9(self, parent):
+        frame = LabelFrame(parent, text="直播间信息",)
         frame.place(relx=0.4436, rely=0.5728, relwidth=0.3660, relheight=0.3133)
         return frame
-    def __tk_list_box_m700arav(self,parent):
+    def __tk_list_box_m700arav(self, parent):
         lb = Listbox(parent)
         
         lb.insert(END, "直播间名")
