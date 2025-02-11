@@ -3,6 +3,8 @@ from PIL import Image, ImageTk
 from ffpyplayer.player import MediaPlayer
 import asyncio
 import threading
+from tkinter import *
+from tkinter.ttk import *
 from backend import MainProcessor
 
 # Define video player class
@@ -71,55 +73,102 @@ class VideoPlay:
             self.is_paused = not self.is_paused  # Toggle pause state
             self.player.set_pause(self.is_paused)  # Set player pause state
 
-class MainWindow(object):
-    def __init__(self, baseURL: str) -> None:
-        self.root = tk.Tk()
-        self.root.title("直播列表")
 
-        # Initialize MainProcessor
-        self.processor = MainProcessor(baseURL)
-
-        # Create frames for layout
-        self.left_frame = tk.Frame(self.root)
-        self.left_frame.pack(side=tk.LEFT, fill=tk.Y)
-
-        self.right_frame = tk.Frame(self.root)
-        self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-
-        # Create listbox for live list
-        self.live_listbox = tk.Listbox(self.left_frame)
-        self.live_listbox.pack(fill=tk.Y, expand=True)
-        self.live_listbox.bind('<<ListboxSelect>>', self.show_live_details)
-
-        # Create text widget for live details
-        self.live_details = tk.Text(self.right_frame)
-        self.live_details.pack(fill=tk.BOTH, expand=True)
-
-        # Load live list
-        self.load_live_list()
-
-    def load_live_list(self) -> None:
-        live_list = self.processor.getLiveList()
-        if live_list:
-            for live in live_list:
-                self.live_listbox.insert(tk.END, live["name"])
-
-    def show_live_details(self, event) -> None:
-        selected_index = self.live_listbox.curselection()
-        if selected_index:
-            live_name = self.live_listbox.get(selected_index)
-            live_list = self.processor.getLiveList()
-            for live in live_list:
-                if live["name"] == live_name:
-                    details = f"名称: {live['name']}\n"
-                    details += f"状态: {live['status']}\n"
-                    details += f"作者: {live['authr']}\n"
-                    details += f"描述: {live['description']}\n"
-                    self.live_details.delete(1.0, tk.END)
-                    self.live_details.insert(tk.END, details)
-                    break
-
-if __name__ == "__main__":
-    baseURL = "https://live.dfggmc.top/api/v1/"  # Replace with your actual base URL
-    app = MainWindow(baseURL)
-    app.root.mainloop()
+class WinGUI(Tk):
+    def __init__(self):
+        super().__init__()
+        self.__win()
+        self.tk_label_frame_m70090d2 = self.__tk_label_frame_m70090d2(self)
+        self.tk_list_box_m7009mg6 = self.__tk_list_box_m7009mg6( self.tk_label_frame_m70090d2) 
+        self.tk_frame_m700adhb = self.__tk_frame_m700adhb(self)
+        self.tk_canvas_m700csgf = self.__tk_canvas_m700csgf( self.tk_frame_m700adhb) 
+        self.tk_button_m700bxy8 = self.__tk_button_m700bxy8(self)
+        self.tk_label_frame_m700yzw9 = self.__tk_label_frame_m700yzw9(self)
+        self.tk_list_box_m700arav = self.__tk_list_box_m700arav( self.tk_label_frame_m700yzw9) 
+    def __win(self):
+        self.title("花枫Live")
+        # 设置窗口大小、居中
+        width = 541
+        height = 316
+        screenwidth = self.winfo_screenwidth()
+        screenheight = self.winfo_screenheight()
+        geometry = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+        self.geometry(geometry)
+        
+        self.minsize(width=width, height=height)
+        
+    def scrollbar_autohide(self,vbar, hbar, widget):
+        """自动隐藏滚动条"""
+        def show():
+            if vbar: vbar.lift(widget)
+            if hbar: hbar.lift(widget)
+        def hide():
+            if vbar: vbar.lower(widget)
+            if hbar: hbar.lower(widget)
+        hide()
+        widget.bind("<Enter>", lambda e: show())
+        if vbar: vbar.bind("<Enter>", lambda e: show())
+        if vbar: vbar.bind("<Leave>", lambda e: hide())
+        if hbar: hbar.bind("<Enter>", lambda e: show())
+        if hbar: hbar.bind("<Leave>", lambda e: hide())
+        widget.bind("<Leave>", lambda e: hide())
+    
+    def v_scrollbar(self,vbar, widget, x, y, w, h, pw, ph):
+        widget.configure(yscrollcommand=vbar.set)
+        vbar.config(command=widget.yview)
+        vbar.place(relx=(w + x) / pw, rely=y / ph, relheight=h / ph, anchor='ne')
+    def h_scrollbar(self,hbar, widget, x, y, w, h, pw, ph):
+        widget.configure(xscrollcommand=hbar.set)
+        hbar.config(command=widget.xview)
+        hbar.place(relx=x / pw, rely=(y + h) / ph, relwidth=w / pw, anchor='sw')
+    def create_bar(self,master, widget,is_vbar,is_hbar, x, y, w, h, pw, ph):
+        vbar, hbar = None, None
+        if is_vbar:
+            vbar = Scrollbar(master)
+            self.v_scrollbar(vbar, widget, x, y, w, h, pw, ph)
+        if is_hbar:
+            hbar = Scrollbar(master, orient="horizontal")
+            self.h_scrollbar(hbar, widget, x, y, w, h, pw, ph)
+        self.scrollbar_autohide(vbar, hbar, widget)
+    def __tk_label_frame_m70090d2(self,parent):
+        frame = LabelFrame(parent,text="直播列表",)
+        frame.place(relx=0.0333, rely=0.0411, relwidth=0.3660, relheight=0.8418)
+        return frame
+    def __tk_list_box_m7009mg6(self,parent):
+        lb = Listbox(parent)
+        
+        lb.insert(END, "列表框")
+        
+        lb.insert(END, "Python")
+        
+        lb.insert(END, "Tkinter Helper")
+        
+        lb.place(relx=0.0000, rely=0.0000, relwidth=1.0000, relheight=1.0000)
+        return lb
+    def __tk_frame_m700adhb(self,parent):
+        frame = Frame(parent,)
+        frame.place(relx=0.4436, rely=0.0633, relwidth=0.3678, relheight=0.5063)
+        return frame
+    def __tk_canvas_m700csgf(self,parent):
+        canvas = Canvas(parent,bg="#aaa")
+        canvas.place(relx=0.0000, rely=0.0000, relwidth=1.0000, relheight=1.0000)
+        return canvas
+    def __tk_button_m700bxy8(self,parent):
+        btn = Button(parent, text="进去", takefocus=False,)
+        btn.place(relx=0.8503, rely=0.0633, relwidth=0.1054, relheight=0.1139)
+        return btn
+    def __tk_label_frame_m700yzw9(self,parent):
+        frame = LabelFrame(parent,text="直播间信息",)
+        frame.place(relx=0.4436, rely=0.5728, relwidth=0.3660, relheight=0.3133)
+        return frame
+    def __tk_list_box_m700arav(self,parent):
+        lb = Listbox(parent)
+        
+        lb.insert(END, "直播间名")
+        
+        lb.insert(END, "主播")
+        
+        lb.insert(END, "直播间人数")
+        
+        lb.place(relx=0.0000, rely=0.0000, relwidth=1.0000, relheight=1.0000)
+        return lb
