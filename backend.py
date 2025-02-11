@@ -43,11 +43,11 @@ class MainProcessor(object):
             "description": description,
             "name": name,
             "videoSource": videoSource,
-            "videoSourceType": sourceType
+            "videoSourceType": sourceType.lower()
         }
+        
         async with aiohttp.ClientSession() as session:
             async with session.post(self.base_url + "api/v1/live/create", data=data) as response:
-                content = await response.read()
                 if response.status == 200:
                     return True
                 else:
