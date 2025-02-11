@@ -32,7 +32,6 @@ class VideoPlay:
 
         # 开始播放视频
         self.start_video(videoSource)
-        print(f"开始播放视频: {videoSource}")  # 添加调试信息
         try:
             self.root.mainloop()
         except:
