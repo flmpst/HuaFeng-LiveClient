@@ -7,22 +7,41 @@ import asyncio
 
 class MainProcessor(object):
     def __init__(self, baseURL: str, token: str, phpsessid: str) -> None:
+        if token == "" and phpsessid != "":
+            self.token = asyncio.run(self.getToken(baseURL, phpsessid))
+        else:
+            self.token = token
+
         self.base_url = baseURL if baseURL.endswith('/') else baseURL + '/'
-        self.token = token
         self.phpsessid = phpsessid
 
     async def deleteLive(self, liveID: int):
         try:
             async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
                 async with session.get(self.base_url + f"api/v1/live/delet?liveId={liveID}") as response:
-                    if await response.json(encoding='utf-8-sig')['code'] == '200':
-                        returnContent = "success"
-                    else:
-                        returnContent = False
+                    response_json = await response.json(encoding='utf-8-sig')
+                    match response_json['code']:
+                        case 200:
+                            returnContent = "success"
+                        case 403:
+                            returnContent = "refuse"
+                        case _:
+                            returnContent = False
         except:
             returnContent = False
         finally:
             return returnContent
+
+    async def getToken(self, base_url, phpsessid: str) -> str:
+        async with aiohttp.ClientSession(cookies={"PHPSESSID": phpsessid}) as session:
+            async with session.get(base_url + f"api/v1/user/get") as respone:
+                responeJson = await respone.json(encoding='utf-8-sig')
+                if responeJson["code"] == 200:
+                    returnContent = responeJson["data"]["token"]
+                else:
+                    returnContent = False
+
+                return returnContent
 
     async def getChatLog(self, liveID: int, limit: int, offset:float = 0):
         async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
@@ -70,7 +89,8 @@ class MainProcessor(object):
 
         async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
             async with session.post(self.base_url + "api/v1/live/create", data=data) as response:
-                if response.status == 200:
+                responseJson = await response.json(encoding='utf-8-sig')
+                if responseJson["code"] == 200:
                     return True
                 else:
                     return False
@@ -93,27 +113,20 @@ class MainProcessor(object):
             async with session.get(self.base_url + "api/v1/refresh") as response:
                 content = await response.json(encoding='utf-8-sig')["data"][0]
 
-"""
-/api/v1/user/clientAuth?clientid=
-/?method=clientAuth&clientid=
-"""
-
 class Auth(object):
     def __init__(self, base_url, callbackFunc):
-        print("into")
         self.clientId = uuid4()
         self.base_url = base_url
         self.auth_url = base_url + f"?method=clientAuth&clientid={self.clientId}"
         self.callbackFunc = callbackFunc
         webbrowser.open(self.auth_url)
-        asyncio.run(self.pollAuthStatus())  # 调用轮询函数
+        asyncio.run(self.pollAuthStatus())
 
     async def pollAuthStatus(self):
         async with aiohttp.ClientSession() as session:
             while True:
                 async with session.get(self.base_url + f"api/v1/user/clientAuth?clientid={self.clientId}") as response:
                     content = await response.json(encoding='utf-8-sig')
-                    print(content)
                     if content["code"] == 200:
                         self.callbackFunc(content["data"]["token"])
                         break

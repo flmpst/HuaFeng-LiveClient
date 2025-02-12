@@ -86,12 +86,10 @@ class MainWindow:
     def __init__(self):
         self.ask_window = AskWindow()
         self.ask_window.wait_window()
-        try:
-            self.base_url = self.ask_window.base_url
-            self.token = self.ask_window.token
-            self.cookie = self.ask_window.cookie
-        except:
-            exit(0)
+        
+        self.base_url = self.ask_window.base_url
+        self.token = self.ask_window.token
+        self.cookie = self.ask_window.cookie
 
         self.root = tkinter.Tk()
         self.__win()
@@ -228,11 +226,13 @@ class MainWindow:
             live_id = await self.get_live_id_by_name(live_name.split(" - ")[0])
             if live_id:
                 returnContent = await self.processor.deleteLive(live_id)
-                if returnContent == "success":
-                    messagebox.showinfo("成功", "直播删除成功")
-                    self.refresh_live_list()
-                else:
-                    messagebox.showerror("失败", "未知原因")
+                match returnContent:
+                    case "success":
+                        messagebox.showinfo(":)", "删除成功")
+                    case "refuse":
+                        messagebox.showerror(":(", "拒绝访问")
+                    case _:
+                        messagebox.showwarning(":/", "状态未知")
         else:
             messagebox.showwarning("提示", "请先选中一个直播")
 
@@ -343,7 +343,7 @@ class AskWindow(tkinter.Tk):
         self.textdje2v = tkinter.Text(self, width=40, height=1)
         self.label4vtf = ttk.Label(self, text="输入PHPSESSID（可以提供更多功能）")
         self.textdsg2d = tkinter.Text(self, width=40, height=1)
-        self.buttonf94 = ttk.Button(self, text="提交", command=self.getUserInput)
+        self.buttonf94 = ttk.Button(self, text="提交", command=lambda: self.getUserInput(False))
         self.buttonai3 = ttk.Button(self, text="通过浏览器登录", command=self.loginByBrowser)
         
 
@@ -369,14 +369,13 @@ class AskWindow(tkinter.Tk):
     def loginByBrowser(self) -> str:
         backend.Auth(self.textf3d0c.get(1.0, tkinter.END), self.loginByBrowserCallback)
 
-    def getUserInput(self, *Flags):
-        if Flags == []:
-            self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
+    def getUserInput(self, isBrowser):
+        if not isBrowser:
             self.token = self.textdje2v.get(1.0, tkinter.END).rstrip("\n")
-            self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
-            self.destroy()
-        else:
-            self.destroy()
+
+        self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
+        self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
+        self.destroy()
 
 class CreateLive(tkinter.Tk):
     def __init__(self, processor: backend.MainProcessor):
