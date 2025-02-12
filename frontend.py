@@ -87,9 +87,12 @@ class MainWindow:
     def __init__(self):
         self.ask_window = AskWindow()
         self.ask_window.wait_window()
-        self.base_url = self.ask_window.base_url
-        self.token = self.ask_window.token
-        self.cookie = self.ask_window.cookie
+        try:
+            self.base_url = self.ask_window.base_url
+            self.token = self.ask_window.token
+            self.cookie = self.ask_window.cookie
+        except:
+            exit(1)
 
         self.root = tkinter.Tk()
         self.__win()
@@ -286,7 +289,7 @@ class AskWindow(tkinter.Tk):
     def __init__(self):
         super().__init__()
 
-        self.geometry("400x150")
+        self.geometry("400x170")
         self.title("")
 
         self.labelr8fs = ttk.Label(self, text="输入直播服务器地址")
@@ -300,7 +303,7 @@ class AskWindow(tkinter.Tk):
 
         self.textf3d0c.insert(tkinter.END, "https://live.dfggmc.top/")
 
-        self.elements = [self.labelr8fs, self.label3d3a, self.textf3d0c, self.label8hsc, self.textdje2v, self.buttonf94]
+        self.elements = [self.labelr8fs, self.label3d3a, self.textf3d0c, self.label8hsc, self.textdje2v, self.label4vtf, self.textdsg2d, self.buttonf94]
 
         for element in self.elements:
             element.pack()
@@ -309,6 +312,7 @@ class AskWindow(tkinter.Tk):
         self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
         self.token = self.textdje2v.get(1.0, tkinter.END).rstrip("\n")
         self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
+        print(self.base_url,self.token, self.cookie)
         self.destroy()
 
 class CreateLive(tkinter.Tk):

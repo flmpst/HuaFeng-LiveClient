@@ -49,8 +49,7 @@ class MainProcessor(object):
         
         async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
             async with session.post(self.base_url + "api/v1/live/create", data=data) as response:
-                print(data)
-                if await response.json()["code"] == 200:
+                if await response.status == 200:
                     return True
                 else:
                     return False
