@@ -358,6 +358,7 @@ class AskWindow(tkinter.Tk):
 
         for element in self.elements:
             element.pack()
+        self.buttonai3.pack(pady=(5, 0))
 
     def loginByBrowserCallback(self, token):
         self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
