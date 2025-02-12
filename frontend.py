@@ -312,14 +312,13 @@ class AskWindow(tkinter.Tk):
         self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
         self.token = self.textdje2v.get(1.0, tkinter.END).rstrip("\n")
         self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
-        print(self.base_url,self.token, self.cookie)
         self.destroy()
 
 class CreateLive(tkinter.Tk):
     def __init__(self, processor: backend.MainProcessor):
         super().__init__()
+        self.radio_button_var = tkinter.IntVar()
         self.processor: backend.MainProcessor = processor
-        self.source_type = tkinter.StringVar(value="flv")  # 默认值为 FLV
         self.__win()
         self.tk_input_m70lv17r = self.__tk_input_m70lv17r(self)
         self.tk_label_m70lvean = self.__tk_label_m70lvean(self)
@@ -403,17 +402,19 @@ class CreateLive(tkinter.Tk):
         txt.place(x=95, y=80, width=206, height=30)
         return txt
     def __tk_radio_button_m70m0lko(self,parent):
-        rb = ttk.Radiobutton(parent, text="FLV", variable=self.source_type, value="flv")
+        rb = ttk.Radiobutton(parent, text="FLV", command=lambda: self.__radio_button("flv"), variable=self.radio_button_var, value=1)
         rb.place(x=20, y=185, width=80, height=30)
         return rb
     def __tk_radio_button_m70m0phr(self,parent):
-        rb = ttk.Radiobutton(parent, text="MP4", variable=self.source_type, value="mp4")
+        rb = ttk.Radiobutton(parent, text="MP4", command=lambda: self.__radio_button("mp4"), variable=self.radio_button_var, value=2)
         rb.place(x=120, y=185, width=80, height=30)
         return rb
     def __tk_radio_button_m70m0rcn(self,parent):
-        rb = ttk.Radiobutton(parent, text="M3U8", variable=self.source_type, value="m3u8")
+        rb = ttk.Radiobutton(parent, text="M3U8", command=lambda: self.__radio_button("m3u8"), variable=self.radio_button_var, value=3)
         rb.place(x=220, y=185, width=80, height=30)
         return rb
+    def __radio_button(self, type):
+        self.source_type = type
     def __tk_label_m70m2mo0(self,parent):
         label = ttk.Label(parent,text="源类型",anchor="center", )
         label.place(x=20, y=140, width=55, height=35)
@@ -433,11 +434,9 @@ class CreateLive(tkinter.Tk):
         name = self.tk_input_m70lv17r.get("1.0", tkinter.END).strip()
         description = self.tk_input_m70lw96g.get("1.0", tkinter.END).strip()
         video_source = self.tk_input_m70lxk54.get("1.0", tkinter.END).strip()
-        source_type = self.source_type.get()  # 获取 Radio Button 的状态
-        success = await self.processor.createLive(name, description, video_source, source_type)
+        success = await self.processor.createLive(name, description, video_source, self.source_type)
         if success:
             messagebox.showinfo("成功", "直播创建成功")
         else:
             messagebox.showerror("失败", "直播创建失败")
         self.destroy()
-

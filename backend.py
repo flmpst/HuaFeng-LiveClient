@@ -44,12 +44,12 @@ class MainProcessor(object):
             "description": description,
             "name": name,
             "videoSource": videoSource,
-            "videoSourceType": sourceType.lower()
+            "videoSourceType": sourceType
         }
-        
+
         async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
             async with session.post(self.base_url + "api/v1/live/create", data=data) as response:
-                if await response.status == 200:
+                if response.status == 200:
                     return True
                 else:
                     return False
@@ -71,4 +71,3 @@ class MainProcessor(object):
         async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
             async with session.get(self.base_url + "api/v1/refresh") as response:
                 content = await response.json(encoding='utf-8-sig')
-                print(content)
