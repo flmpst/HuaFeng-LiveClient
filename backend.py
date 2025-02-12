@@ -8,6 +8,21 @@ class MainProcessor(object):
         self.token = token
         self.phpsessid = phpsessid
 
+    async def deleteLive(self, liveID: int):
+        async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
+            async with session.get(self.base_url + f"api/v1/live/delet?liveId={liveID}") as response:
+                if await response.json(encoding='utf-8-sig')["code"] == 403:
+                    returnContent = False
+                else:
+                    returnContent = True
+                    
+                return returnContent
+
+    async def getChatLog(self, liveID: int, limit: int, offset:float = 0):
+        async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
+            async with session.get(self.base_url + f"api/v1/chat/get?room_id={liveID}&limit={limit}&offset={offset}") as response:
+                await response.json(encoding='utf-8-sig')["data"]["message"]
+
     async def getLiveList(self) -> typing.Union[dict, bool]:  # Get live list
         async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
             async with session.get(self.base_url + "api/v1/live/list") as response:
@@ -67,7 +82,7 @@ class MainProcessor(object):
                 else:
                     return False
                 
-    async def ziSha(self) -> bool:
+    async def refreshToken(self) -> bool:
         async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
             async with session.get(self.base_url + "api/v1/refresh") as response:
                 content = await response.json(encoding='utf-8-sig')
