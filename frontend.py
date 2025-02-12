@@ -92,7 +92,7 @@ class MainWindow:
             self.token = self.ask_window.token
             self.cookie = self.ask_window.cookie
         except:
-            exit(1)
+            exit(0)
 
         self.root = tkinter.Tk()
         self.__win()
@@ -102,6 +102,7 @@ class MainWindow:
         self.tk_canvas_m700csgf = self.__tk_canvas_m700csgf(self.tk_frame_m700adhb) 
         self.tk_button_m700bxy8 = self.__tk_button_m700bxy8(self.root)
         self.tk_button_create_live = self.__tk_button_create_live(self.root)
+        self.tk_button_delete_live = self.__tk_button_delete_live(self.root)
         self.tk_label_frame_m700yzw9 = self.__tk_label_frame_m700yzw9(self.root)
         self.tk_list_box_m700arav = self.__tk_list_box_m700arav(self.tk_label_frame_m700yzw9) 
 
@@ -215,6 +216,27 @@ class MainWindow:
         win = CreateLive(self.processor)
         win.mainloop()
 
+    def delete_live(self):
+        threading.Thread(target=self._delete_live_thread).start()
+
+    def _delete_live_thread(self):
+        asyncio.run(self._delete_live())
+
+    async def _delete_live(self):
+        selected_index = self.tk_list_box_m7009mg6.curselection()
+        if selected_index:
+            live_name = self.tk_list_box_m7009mg6.get(selected_index)
+            live_id = await self.get_live_id_by_name(live_name.split(" - ")[0])
+            if live_id:
+                returnContent = await self.processor.deleteLive(live_id)
+                if returnContent == "success":
+                    messagebox.showinfo("成功", "直播删除成功")
+                    self.refresh_live_list()
+                else:
+                    messagebox.showerror("失败", "未知原因")
+        else:
+            messagebox.showwarning("提示", "请先选中一个直播")
+
     def __win(self):
         self.root.title("花枫Live")
         # 设置窗口大小、居中
@@ -290,6 +312,11 @@ class MainWindow:
     def __tk_button_create_live(self, parent):
         btn = ttk.Button(parent, text="创建直播间", takefocus=False, command=self.create_live)
         btn.place(relx=0.8503, rely=0.1833, relwidth=0.1054, relheight=0.1139)
+        return btn
+
+    def __tk_button_delete_live(self, parent):
+        btn = ttk.Button(parent, text="删除直播", takefocus=False, command=self.delete_live)
+        btn.place(relx=0.8503, rely=0.3033, relwidth=0.1054, relheight=0.1139)
         return btn
 
     def __tk_label_frame_m700yzw9(self, parent):

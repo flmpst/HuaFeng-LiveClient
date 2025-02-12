@@ -9,14 +9,17 @@ class MainProcessor(object):
         self.phpsessid = phpsessid
 
     async def deleteLive(self, liveID: int):
-        async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
-            async with session.get(self.base_url + f"api/v1/live/delet?liveId={liveID}") as response:
-                if await response.json(encoding='utf-8-sig')["code"] == 403:
-                    returnContent = False
-                else:
-                    returnContent = True
-                    
-                return returnContent
+        try:
+            async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
+                async with session.get(self.base_url + f"api/v1/live/delet?liveId={liveID}") as response:
+                    if await response.json(encoding='utf-8-sig')['code'] == '200':
+                        returnContent = "success"
+                    else:
+                        returnContent = False
+        except:
+            returnContent = False
+        finally:
+            return returnContent
 
     async def getChatLog(self, liveID: int, limit: int, offset:float = 0):
         async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
