@@ -1,6 +1,9 @@
 import aiohttp
 import json
 import typing
+from uuid import uuid4
+import webbrowser
+import asyncio
 
 class MainProcessor(object):
     def __init__(self, baseURL: str, token: str, phpsessid: str) -> None:
@@ -88,4 +91,30 @@ class MainProcessor(object):
     async def refreshToken(self) -> bool:
         async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
             async with session.get(self.base_url + "api/v1/refresh") as response:
-                content = await response.json(encoding='utf-8-sig')
+                content = await response.json(encoding='utf-8-sig')["data"][0]
+
+"""
+/api/v1/user/clientAuth?clientid=
+/?method=clientAuth&clientid=
+"""
+
+class Auth(object):
+    def __init__(self, base_url, callbackFunc):
+        print("into")
+        self.clientId = uuid4()
+        self.base_url = base_url
+        self.auth_url = base_url + f"?method=clientAuth&clientid={self.clientId}"
+        self.callbackFunc = callbackFunc
+        webbrowser.open(self.auth_url)
+        asyncio.run(self.pollAuthStatus())  # 调用轮询函数
+
+    async def pollAuthStatus(self):
+        async with aiohttp.ClientSession() as session:
+            while True:
+                async with session.get(self.base_url + f"api/v1/user/clientAuth?clientid={self.clientId}") as response:
+                    content = await response.json(encoding='utf-8-sig')
+                    print(content)
+                    if content["code"] == 200:
+                        self.callbackFunc(content["data"]["token"])
+                        break
+                await asyncio.sleep(1)

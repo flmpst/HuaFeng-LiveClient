@@ -11,7 +11,6 @@ import aiohttp
 from time import sleep
 import io
 
-
 # 定义视频播放器类
 class VideoPlay:
     # 初始化函数
@@ -144,7 +143,7 @@ class MainWindow:
             ...
 
     def display_live_info(self, event):
-        threading.Thread(target=self._display_live_info_thread, args=(event,)).start()
+        threading.Thread(target=self._display_live_info_thread, args=(event,)).start()  # 将 event 参数放在一个元组中
 
     def _display_live_info_thread(self, event):
         asyncio.run(self._display_live_info(event))
@@ -334,7 +333,7 @@ class AskWindow(tkinter.Tk):
     def __init__(self):
         super().__init__()
 
-        self.geometry("400x170")
+        self.geometry("400x200")
         self.title("")
 
         self.labelr8fs = ttk.Label(self, text="输入直播服务器地址")
@@ -345,19 +344,38 @@ class AskWindow(tkinter.Tk):
         self.label4vtf = ttk.Label(self, text="输入PHPSESSID（可以提供更多功能）")
         self.textdsg2d = tkinter.Text(self, width=40, height=1)
         self.buttonf94 = ttk.Button(self, text="提交", command=self.getUserInput)
+        self.buttonai3 = ttk.Button(self, text="通过浏览器登录", command=self.loginByBrowser)
+        
 
         self.textf3d0c.insert(tkinter.END, "https://live.dfggmc.top/")
 
-        self.elements = [self.labelr8fs, self.label3d3a, self.textf3d0c, self.label8hsc, self.textdje2v, self.label4vtf, self.textdsg2d, self.buttonf94]
+        self.elements = [self.labelr8fs, self.label3d3a, 
+                         self.textf3d0c, self.label8hsc, 
+                         self.textdje2v, self.label4vtf, 
+                         self.textdsg2d, self.buttonf94, 
+                         self.buttonai3
+                         ]
 
         for element in self.elements:
             element.pack()
 
-    def getUserInput(self):
+    def loginByBrowserCallback(self, token):
         self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
-        self.token = self.textdje2v.get(1.0, tkinter.END).rstrip("\n")
+        self.token = token
         self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
-        self.destroy()
+        self.getUserInput(True)
+
+    def loginByBrowser(self) -> str:
+        backend.Auth(self.textf3d0c.get(1.0, tkinter.END), self.loginByBrowserCallback)
+
+    def getUserInput(self, *Flags):
+        if Flags == []:
+            self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
+            self.token = self.textdje2v.get(1.0, tkinter.END).rstrip("\n")
+            self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
+            self.destroy()
+        else:
+            self.destroy()
 
 class CreateLive(tkinter.Tk):
     def __init__(self, processor: backend.MainProcessor):
