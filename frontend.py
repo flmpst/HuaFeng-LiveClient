@@ -107,6 +107,7 @@ class MainWindow:
 
         self.processor = backend.MainProcessor(baseURL=self.base_url, token=self.token, phpsessid=self.cookie)  # 初始化MainProcessor
         self.root.after(0, self.run_async_tasks)
+        self.root.after(10000, self.refresh_live_list)  # 每隔10秒刷新直播列表
 
     def run_async_tasks(self):
         threading.Thread(target=self.load_live_list).start()
@@ -121,6 +122,23 @@ class MainWindow:
                 for live in live_list:
                     self.tk_list_box_m7009mg6.insert(tkinter.END, f"{live['name']} - {live['author']}")
             self.tk_list_box_m7009mg6.bind('<<ListboxSelect>>', self.display_live_info)
+        except:
+            ...
+
+    def refresh_live_list(self):
+        threading.Thread(target=self._refresh_live_list_thread).start()
+        self.root.after(10000, self.refresh_live_list)  # 重新设置定时任务
+
+    def _refresh_live_list_thread(self):
+        asyncio.run(self._refresh_live_list())
+
+    async def _refresh_live_list(self):
+        try:
+            live_list = await self.processor.getLiveList()
+            if live_list:
+                self.tk_list_box_m7009mg6.delete(0, tkinter.END)
+                for live in live_list:
+                    self.tk_list_box_m7009mg6.insert(tkinter.END, f"{live['name']} - {live['author']}")
         except:
             ...
 
