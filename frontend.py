@@ -375,7 +375,8 @@ class AskWindow(tkinter.Tk):
 
         self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
         self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
-        if self.cookie != "" or self.cookie != " ":
+        print(self.token)
+        if self.cookie:
             messagebox.showwarning("注意", "PHPSESSID 登录方式正在被逐步放弃。请考虑使用 Token 登录！")
         self.destroy()
 
