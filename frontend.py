@@ -89,7 +89,6 @@ class MainWindow:
         
         self.base_url = self.ask_window.base_url
         self.token = self.ask_window.token
-        self.cookie = self.ask_window.cookie
 
         self.root = tkinter.Tk()
         self.__win()
@@ -103,7 +102,7 @@ class MainWindow:
         self.tk_label_frame_m700yzw9 = self.__tk_label_frame_m700yzw9(self.root)
         self.tk_list_box_m700arav = self.__tk_list_box_m700arav(self.tk_label_frame_m700yzw9) 
 
-        self.processor = backend.MainProcessor(baseURL=self.base_url, token=self.token, phpsessid=self.cookie)  # 初始化MainProcessor
+        self.processor = backend.MainProcessor(baseURL=self.base_url, token=self.token)  # 初始化MainProcessor
         self.root.after(0, self.run_async_tasks)
         self.root.after(10000, self.refresh_live_list)  # 每隔10秒刷新直播列表
 
@@ -333,7 +332,7 @@ class AskWindow(tkinter.Tk):
     def __init__(self):
         super().__init__()
 
-        self.geometry("400x200")
+        self.geometry("400x160")
         self.title("")
 
         self.labelr8fs = ttk.Label(self, text="输入直播服务器地址")
@@ -341,8 +340,6 @@ class AskWindow(tkinter.Tk):
         self.textf3d0c = tkinter.Text(self, width=40, height=1)
         self.label8hsc = ttk.Label(self, text="输入API Token（未输入将无法发送弹幕、创建直播间等）")
         self.textdje2v = tkinter.Text(self, width=40, height=1)
-        self.label4vtf = ttk.Label(self, text="输入PHPSESSID（可以提供更多功能）")
-        self.textdsg2d = tkinter.Text(self, width=40, height=1)
         self.buttonf94 = ttk.Button(self, text="提交", command=lambda: self.getUserInput(False))
         self.buttonai3 = ttk.Button(self, text="通过浏览器登录", command=self.loginByBrowser)
         
@@ -351,8 +348,7 @@ class AskWindow(tkinter.Tk):
 
         self.elements = [self.labelr8fs, self.label3d3a, 
                          self.textf3d0c, self.label8hsc, 
-                         self.textdje2v, self.label4vtf, 
-                         self.textdsg2d, self.buttonf94, 
+                         self.textdje2v, self.buttonf94, 
                          self.buttonai3
                          ]
 
@@ -363,7 +359,6 @@ class AskWindow(tkinter.Tk):
     def loginByBrowserCallback(self, token):
         self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
         self.token = token
-        self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
         self.getUserInput(True)
 
     def loginByBrowser(self) -> str:
@@ -372,9 +367,7 @@ class AskWindow(tkinter.Tk):
     def getUserInput(self, isBrowser):
         if not isBrowser:
             self.token = self.textdje2v.get(1.0, tkinter.END).rstrip("\n")
-
         self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
-        self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
         self.destroy()
 
 class CreateLive(tkinter.Tk):
@@ -385,14 +378,17 @@ class CreateLive(tkinter.Tk):
         self.__win()
         self.tk_input_m70lv17r = self.__tk_input_m70lv17r(self)
         self.tk_label_m70lvean = self.__tk_label_m70lvean(self)
-        self.tk_input_m70lw96g = self.__tk_input_m70lw96g(self)
-        self.tk_label_m70lwhxr = self.__tk_label_m70lwhxr(self)
+        self.tk_input_m70lxk54 = self.__tk_input_m70lxk54(self)
         self.tk_label_m70lx68w = self.__tk_label_m70lx68w(self)
         self.tk_input_m70lxk54 = self.__tk_input_m70lxk54(self)
+        self.tk_label_cover_url = self.__tk_label_cover_url(self)  # 新增封面URL标签
+        self.tk_input_cover_url = self.__tk_input_cover_url(self)  # 新增封面URL输入框
         self.tk_radio_button_m70m0lko = self.__tk_radio_button_m70m0lko(self)
         self.tk_radio_button_m70m0phr = self.__tk_radio_button_m70m0phr(self)
         self.tk_radio_button_m70m0rcn = self.__tk_radio_button_m70m0rcn(self)
         self.tk_label_m70m2mo0 = self.__tk_label_m70m2mo0(self)
+        self.tk_input_m70lw96g = self.__tk_input_m70lw96g(self)
+        self.tk_label_m70lwhxr = self.__tk_label_m70lwhxr(self)
         self.tk_button_m70mqufr = self.__tk_button_m70mqufr(self)
 
     def __win(self):
@@ -450,11 +446,11 @@ class CreateLive(tkinter.Tk):
         return label
     def __tk_input_m70lw96g(self,parent):
         txt = tkinter.Text(parent, height=10)
-        txt.place(x=95, y=245, width=200, height=182)
+        txt.place(x=95, y=265, width=200, height=182)
         return txt
     def __tk_label_m70lwhxr(self,parent):
         label = ttk.Label(parent,text="直播描述",anchor="center", )
-        label.place(x=20, y=245, width=60, height=36)
+        label.place(x=20, y=265, width=60, height=36)
         return label
     def __tk_label_m70lx68w(self,parent):
         label = ttk.Label(parent,text="直播地址",anchor="center", )
@@ -464,23 +460,32 @@ class CreateLive(tkinter.Tk):
         txt = tkinter.Text(parent, height=1)
         txt.place(x=95, y=80, width=206, height=30)
         return txt
+    def __tk_label_cover_url(self, parent):
+        label = ttk.Label(parent, text="封面URL", anchor="center")
+        label.place(x=20, y=120, width=55, height=35)
+        return label
+
+    def __tk_input_cover_url(self, parent):
+        txt = tkinter.Text(parent, height=1)
+        txt.place(x=95, y=120, width=206, height=30)
+        return txt
     def __tk_radio_button_m70m0lko(self,parent):
         rb = ttk.Radiobutton(parent, text="FLV", command=lambda: self.__radio_button("flv"), variable=self.radio_button_var, value=1)
-        rb.place(x=20, y=185, width=80, height=30)
+        rb.place(x=20, y=205, width=80, height=30)
         return rb
     def __tk_radio_button_m70m0phr(self,parent):
         rb = ttk.Radiobutton(parent, text="MP4", command=lambda: self.__radio_button("mp4"), variable=self.radio_button_var, value=2)
-        rb.place(x=120, y=185, width=80, height=30)
+        rb.place(x=120, y=205, width=80, height=30)
         return rb
     def __tk_radio_button_m70m0rcn(self,parent):
         rb = ttk.Radiobutton(parent, text="M3U8", command=lambda: self.__radio_button("m3u8"), variable=self.radio_button_var, value=3)
-        rb.place(x=220, y=185, width=80, height=30)
+        rb.place(x=220, y=205, width=80, height=30)
         return rb
     def __radio_button(self, type):
         self.source_type = type
     def __tk_label_m70m2mo0(self,parent):
         label = ttk.Label(parent,text="源类型",anchor="center", )
-        label.place(x=20, y=140, width=55, height=35)
+        label.place(x=20, y=160, width=55, height=35)
         return label
     def __tk_button_m70mqufr(self,parent):
         btn = ttk.Button(parent, text="创建直播", takefocus=False, command=self.create_live)
@@ -497,7 +502,8 @@ class CreateLive(tkinter.Tk):
         name = self.tk_input_m70lv17r.get("1.0", tkinter.END).strip()
         description = self.tk_input_m70lw96g.get("1.0", tkinter.END).strip()
         video_source = self.tk_input_m70lxk54.get("1.0", tkinter.END).strip()
-        success = await self.processor.createLive(name, description, video_source, self.source_type)
+        cover_url = self.tk_input_cover_url.get("1.0", tkinter.END).strip()  # 获取封面URL
+        success = await self.processor.createLive(name, description, video_source, self.source_type, cover_url)  # 传递封面URL
         if success:
             messagebox.showinfo("成功", "直播创建成功")
         else:
