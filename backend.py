@@ -16,9 +16,13 @@ class MainProcessor(object):
         self.phpsessid = phpsessid
 
     async def deleteLive(self, liveID: int):
+        data = {
+            "token": self.token
+        }
+
         try:
             async with aiohttp.ClientSession(cookies={"PHPSESSID": self.phpsessid}) as session:
-                async with session.get(self.base_url + f"api/v1/live/delet?liveId={liveID}") as response:
+                async with session.post(self.base_url + f"api/v1/live/delet?liveId={liveID}", data=data) as response:
                     response_json = await response.json(encoding='utf-8-sig')
                     match response_json['code']:
                         case 200:
@@ -113,6 +117,8 @@ class MainProcessor(object):
             async with session.get(self.base_url + "api/v1/refresh") as response:
                 content = await response.json(encoding='utf-8-sig')["data"][0]
 
+        return content
+    
 class Auth(object):
     def __init__(self, base_url, callbackFunc):
         self.clientId = uuid4()

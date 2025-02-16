@@ -341,7 +341,7 @@ class AskWindow(tkinter.Tk):
         self.textf3d0c = tkinter.Text(self, width=40, height=1)
         self.label8hsc = ttk.Label(self, text="输入API Token（未输入将无法发送弹幕、创建直播间等）")
         self.textdje2v = tkinter.Text(self, width=40, height=1)
-        self.label4vtf = ttk.Label(self, text="输入PHPSESSID（可以提供更多功能）")
+        self.label4vtf = ttk.Label(self, text="输入PHPSESSID（可选、不推荐使用）")
         self.textdsg2d = tkinter.Text(self, width=40, height=1)
         self.buttonf94 = ttk.Button(self, text="提交", command=lambda: self.getUserInput(False))
         self.buttonai3 = ttk.Button(self, text="通过浏览器登录", command=self.loginByBrowser)
@@ -375,6 +375,8 @@ class AskWindow(tkinter.Tk):
 
         self.base_url = self.textf3d0c.get(1.0, tkinter.END).rstrip("\n")
         self.cookie = self.textdsg2d.get(1.0, tkinter.END).rstrip("\n")
+        if self.cookie != "" or self.cookie != " ":
+            messagebox.showwarning("注意", "PHPSESSID 登录方式正在被逐步放弃。请考虑使用 Token 登录！")
         self.destroy()
 
 class CreateLive(tkinter.Tk):
