@@ -84,11 +84,11 @@ class VideoPlay:
 
 class MainWindow:
     def __init__(self):
-        self.ask_window = AskWindow()
-        self.ask_window.wait_window()
+        # self.ask_window = AskWindow()
+        # self.ask_window.wait_window()
         
-        self.base_url = self.ask_window.base_url
-        self.token = self.ask_window.token
+        self.base_url = "https://live.dfggmc.top/"
+        backend.OAuth(self.base_url, self.callback)
 
         self.root = tkinter.Tk()
         self.__win()
@@ -102,9 +102,13 @@ class MainWindow:
         self.tk_label_frame_m700yzw9 = self.__tk_label_frame_m700yzw9(self.root)
         self.tk_list_box_m700arav = self.__tk_list_box_m700arav(self.tk_label_frame_m700yzw9) 
 
-        self.processor = backend.MainProcessor(baseURL=self.base_url, token=self.token)  # 初始化MainProcessor
         self.root.after(0, self.run_async_tasks)
         self.root.after(10000, self.refresh_live_list)  # 每隔10秒刷新直播列表
+
+    def callback(self,token):
+        self.token = token
+        self.processor = backend.MainProcessor(baseURL=self.base_url, token=self.token)
+        print(token)
 
     def run_async_tasks(self):
         threading.Thread(target=self.load_live_list).start()

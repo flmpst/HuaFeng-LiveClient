@@ -4,6 +4,9 @@ import typing
 from uuid import uuid4
 import webbrowser
 import asyncio
+import flask
+import werkzeug
+import threading
 
 class MainProcessor(object):
     def __init__(self, baseURL: str, token: str) -> None:
@@ -113,3 +116,29 @@ class Auth(object):
                         self.callbackFunc(content["data"]["token"])
                         break
                 await asyncio.sleep(1)
+
+class OAuth(object):
+    def __init__(self, base_url, callbackFunc):
+        self.clientId = uuid4()
+        self.base_url = base_url
+        self.auth_url = base_url + f"verify/client?clientid={self.clientId}&callback=http://localhost:14193"
+        self.callbackFunc = callbackFunc
+
+        webbrowser.open(self.auth_url)
+
+        try:
+            oauthThread = threading.Thread(target=self.server)
+            oauthThread.start()
+        except:
+            ...
+
+    def server(self):
+        oAuthCallback = flask.Flask(__name__)
+
+        @oAuthCallback.route('/')
+        def _():
+            self.callbackFunc(flask.request.args.get("token"))
+            oserver.shutdown()
+
+        oserver = werkzeug.serving.make_server('localhost', 14193, oAuthCallback)
+        oserver.serve_forever()
