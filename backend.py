@@ -7,6 +7,7 @@ import platform
 import uuid
 import flask
 import werkzeug
+import platform
 import threading
 
 class MainProcessor(object):
@@ -120,7 +121,7 @@ class Auth(object):
 
 class OAuth(object):
     def __init__(self, base_url, callbackFunc):
-        self.clientId = uuid4()
+        self.clientId =  f"{platform.system()}-{("%012X" % uuid.getnode()).lower()}-{str(uuid.uuid4()).replace('-', '')[:5]}"
         self.base_url = base_url
         self.auth_url = base_url + f"verify/client?clientid={self.clientId}&callback=http://localhost:14193"
         self.callbackFunc = callbackFunc
