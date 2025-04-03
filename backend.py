@@ -1,9 +1,10 @@
 import aiohttp
 import json
 import typing
-from uuid import uuid4
 import webbrowser
 import asyncio
+import platform
+import uuid
 
 class MainProcessor(object):
     def __init__(self, baseURL: str, token: str) -> None:
@@ -85,7 +86,7 @@ class MainProcessor(object):
     async def sendMessage(self, liveID: str, content: str) -> bool:
         data = {
             "token": self.token,
-            "message": content
+            "message": content,
         }
 
         async with aiohttp.ClientSession() as session:
@@ -97,7 +98,7 @@ class MainProcessor(object):
 
 class Auth(object):
     def __init__(self, base_url, callbackFunc):
-        self.clientId = uuid4()
+        self.clientId = f"{platform.system()}-{("%012X" % uuid.getnode()).lower()}-{str(uuid.uuid4()).replace('-', '')[:5]}"
         self.base_url = base_url
         self.auth_url = base_url + f"?method=clientAuth&clientid={self.clientId}"
         self.callbackFunc = callbackFunc
